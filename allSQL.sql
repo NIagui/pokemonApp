@@ -14,8 +14,6 @@
 
 
 
-
-
 CREATE TABLE Trainer
 (
   TrainerID INT NOT NULL AUTO_INCREMENT,

@@ -54,34 +54,19 @@ app.get('/trainers', (req, res) => {
 });
 
 // Define a route to add a trainer
-app.post('/trainers', (req, res) => {
+app.post('/addTrainer', (req, res) => {
     const { TrainerName, Location } = req.body;
-    // use the procedure addTrainer as in the sql
-    // const query = 'INSERT INTO Trainer (TrainerName, Location) VALUES (?, ?)';
-    connection.query(query, [TrainerName, Location], (error, results) => {
+    const procedure = 'CALL addTrainer(?, ?)';
+    connection.query(procedure, [TrainerName, Location], (error, results) => {
         if (error) {
-            res.status(500).send('Error executing query');
+            console.error({error: error.sqlMessage});
+            res.status(500).send({error: error.sqlMessage});
             return;
         }
         res.status(201).send('Trainer added successfully');
     });
 });
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-app.get('/trainers.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'trainers.html'));
-});
-
-app.get('/pokemon.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'pokemon.html'));
-});
-
-app.get('/gym.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'gym.html'));
-});
 
 // Start the server
 app.listen(port, () => {
