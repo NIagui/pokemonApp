@@ -52,7 +52,27 @@
             <button type="button" onclick="hideUpdateForm()">Cancel</button>
         </form>
     </div>
-
+    
+    <div id="pokemonSection" style="display: none;">
+        <h2 id="trainerTitle"></h2>
+        <table id="pokemonTable">
+            <thead>
+                <tr>
+                    <th>Pokemon ID</th>
+                    <th>Pokedex</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Level</th>
+                    <th>Trainer ID</th>
+                    <th>Gym Name</th>
+                </tr>
+            </thead>
+            <tbody id="pokemonList">
+                <!-- Pokémon data will be populated here -->
+            </tbody>
+        </table>
+    </div>
+    
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             fetch('/trainers')
@@ -68,6 +88,7 @@
                         const actionsCell = document.createElement('td');
                         const deleteButton = document.createElement('button');
                         const updateButton = document.createElement('button');
+                        const viewPokemonButton = document.createElement('button');
 
                         idCell.textContent = trainer.TrainerID;
                         nameCell.textContent = trainer.TrainerName;
@@ -76,9 +97,13 @@
                         deleteButton.addEventListener('click', () => deleteTrainer(trainer.TrainerID));
                         updateButton.textContent = 'Update';
                         updateButton.addEventListener('click', () => showUpdateForm(trainer));
+                        viewPokemonButton.textContent = 'View Pokémon';
+                        viewPokemonButton.addEventListener('click', () => fetchPokemonForTrainer(trainer.TrainerID, trainer.TrainerName));
+
 
                         actionsCell.appendChild(deleteButton);
                         actionsCell.appendChild(updateButton);
+                        actionsCell.appendChild(viewPokemonButton);
                         row.appendChild(idCell);
                         row.appendChild(nameCell);
                         row.appendChild(locationCell);
@@ -177,6 +202,36 @@
                 alert(`Error updating trainer: ${error}`);
             }
         });
+
+        function fetchPokemonForTrainer(trainerID, trainerName) {
+            fetch(`/trainers/${trainerID}/pokemon`)
+            .then(response => response.json())
+            .then(pokemon => {
+                document.getElementById('trainerTitle').textContent = `${trainerName}'s Pokemon`; // Set the trainer's name
+                const pokemonTable = document.getElementById('pokemonList');
+                pokemonTable.innerHTML = ''; // Clear previous entries
+
+                pokemon.forEach(poke => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${poke.PokemonID}</td>
+                        <td>${poke.Pokedex}</td>
+                        <td>${poke.PokemonName}</td>
+                        <td>${poke.Type}</td>
+                        <td>${poke.Level}</td>
+                        <td>${poke.TrainerID}</td>
+                        <td>${poke.GymName}</td>
+                    `;
+                    pokemonTable.appendChild(row);
+                });
+
+                document.getElementById('pokemonSection').style.display = 'block'; // Show the section
+            })
+            .catch(error => {
+                console.error('Error fetching Pokémon:', error);
+                alert('Failed to fetch Pokémon');
+            });
+        }
     </script>
     <footer>
         &copy; 2024 My Web Page
