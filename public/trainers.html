@@ -68,6 +68,7 @@
                         const actionsCell = document.createElement('td');
                         const deleteButton = document.createElement('button');
                         const updateButton = document.createElement('button');
+                        const viewPokemonButton = document.createElement('button');
 
                         idCell.textContent = trainer.TrainerID;
                         nameCell.textContent = trainer.TrainerName;
@@ -76,9 +77,13 @@
                         deleteButton.addEventListener('click', () => deleteTrainer(trainer.TrainerID));
                         updateButton.textContent = 'Update';
                         updateButton.addEventListener('click', () => showUpdateForm(trainer));
+                        viewPokemonButton.textContent = 'View Pokémon';
+                        viewPokemonButton.addEventListener('click', () => fetchPokemonForTrainer(trainer.TrainerID));
+
 
                         actionsCell.appendChild(deleteButton);
                         actionsCell.appendChild(updateButton);
+                        actionsCell.appendChild(viewPokemonButton);
                         row.appendChild(idCell);
                         row.appendChild(nameCell);
                         row.appendChild(locationCell);
@@ -177,6 +182,19 @@
                 alert(`Error updating trainer: ${error}`);
             }
         });
+
+        function fetchPokemonForTrainer(trainerID) {
+            fetch(`/trainers/${trainerID}/pokemon`)
+            .then(response => response.json())
+            .then(pokemon => {
+                console.log(pokemon); // You can replace this with code to display the Pokémon in a modal or another table
+                alert(JSON.stringify(pokemon)); // Simple popup to show Pokémon, replace with better UI
+            })
+            .catch(error => {
+                console.error('Error fetching Pokémon:', error.message);
+                alert('Failed to fetch Pokémon');
+            });
+        }
     </script>
     <footer>
         &copy; 2024 My Web Page
