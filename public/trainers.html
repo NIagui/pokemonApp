@@ -22,6 +22,7 @@
                 <th>Trainer ID</th>
                 <th>Trainer Name</th>
                 <th>Location</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -39,6 +40,19 @@
         </form>
     </div>
 
+    <div>
+        <h2>Update Trainer</h2>
+        <form id="updateTrainerForm" style="display:none;">
+            <input type="hidden" id="updateTrainerID" name="TrainerID">
+            <label for="updateTrainerName">Trainer Name:</label>
+            <input type="text" id="updateTrainerName" name="TrainerName" required>
+            <label for="updateLocation">Location:</label>
+            <input type="text" id="updateLocation" name="Location" required>
+            <button type="submit">Update Trainer</button>
+            <button type="button" onclick="hideUpdateForm()">Cancel</button>
+        </form>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             fetch('/trainers')
@@ -48,21 +62,64 @@
                     const trainersTable = document.querySelector('#trainers-table tbody');
                     data.forEach(trainer => {
                         const row = document.createElement('tr');
-                        const idCell = document.createElement('td')
+                        const idCell = document.createElement('td');
                         const nameCell = document.createElement('td');
                         const locationCell = document.createElement('td');
-                        idCell.textContent = trainer.TrainerID
+                        const actionsCell = document.createElement('td');
+                        const deleteButton = document.createElement('button');
+                        const updateButton = document.createElement('button');
+
+                        idCell.textContent = trainer.TrainerID;
                         nameCell.textContent = trainer.TrainerName;
                         locationCell.textContent = trainer.Location;
+                        deleteButton.textContent = 'Delete';
+                        deleteButton.addEventListener('click', () => deleteTrainer(trainer.TrainerID));
+                        updateButton.textContent = 'Update';
+                        updateButton.addEventListener('click', () => showUpdateForm(trainer));
+
+                        actionsCell.appendChild(deleteButton);
+                        actionsCell.appendChild(updateButton);
                         row.appendChild(idCell);
                         row.appendChild(nameCell);
                         row.appendChild(locationCell);
+                        row.appendChild(actionsCell);
                         trainersTable.appendChild(row);
                     });
                 })
                 .catch(error => console.error('Error fetching trainers:', error));
         });
 
+        async function deleteTrainer(trainerID) {
+            if (confirm('Are you sure you want to delete this trainer?')) {
+                try {
+                    const response = await fetch(`/deleteTrainer/${trainerID}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response.ok) {
+                        alert('Trainer deleted successfully!');
+                        location.reload();  // Reload the page to update the trainers list
+                    } else {
+                        const reason = await response.json();
+                        alert(`Failed to delete trainer: ${reason.error}`);
+                    }
+                } catch (error) {
+                    console.error('Error deleting trainer:', error);
+                    alert(`Error deleting trainer: ${error}`);
+                }
+            }
+        }
+
+        function showUpdateForm(trainer) {
+            document.getElementById('updateTrainerForm').style.display = 'block';
+            document.getElementById('updateTrainerID').value = trainer.TrainerID;
+            document.getElementById('updateTrainerName').value = trainer.TrainerName;
+            document.getElementById('updateLocation').value = trainer.Location;
+        }
+
+        function hideUpdateForm() {
+            document.getElementById('updateTrainerForm').style.display = 'none';
+        }
 
         document.getElementById('addTrainerForm').addEventListener('submit', async (event) => {
             event.preventDefault();
@@ -81,16 +138,45 @@
 
                 if (response.ok) {
                     alert('Trainer added successfully!');
+                    location.reload();  // Reload the page to update the trainers list
                 } else {
                     const reason = await response.json();
                     alert(`Failed to add trainer: ${reason.error}`);
                 }
             } catch (error) {
                 console.error('Error adding trainer:', error);
-                alert(`some error happened: ${error}`);
+                alert(`Error adding trainer: ${error}`);
             }
         });
 
+        document.getElementById('updateTrainerForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = {
+                TrainerID: formData.get('TrainerID'),
+                TrainerName: formData.get('TrainerName'),
+                Location: formData.get('Location')
+            };
+
+            try {
+                const response = await fetch(`/updateTrainer/${data.TrainerID}`, {
+                    method: 'PUT',
+                    body: JSON.stringify(data),
+                    headers: {'Content-Type': 'application/json'}
+                });
+
+                if (response.ok) {
+                    alert('Trainer updated successfully!');
+                    location.reload();  // Reload the page to update the trainers list
+                } else {
+                    const reason = await response.json();
+                    alert(`Failed to update trainer: ${reason.error}`);
+                }
+            } catch (error) {
+                console.error('Error updating trainer:', error);
+                alert(`Error updating trainer: ${error}`);
+            }
+        });
     </script>
     <footer>
         &copy; 2024 My Web Page
