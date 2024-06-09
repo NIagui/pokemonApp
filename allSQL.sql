@@ -194,6 +194,14 @@ LEFT JOIN Gym G ON P.GymName = G.GymName
 LEFT JOIN Gym_Leader L ON G.GymName = L.GymName
 WHERE L.LeaderName = 'Brock';
 
+-- Retrieve using JOIN
+-- THis is used to get all the potential challengers of a gym (trainers who shares the same area)
+SELECT T.TrainerName, T.Location
+FROM Trainer T
+INNER JOIN Gym G ON T.Location = G.Location
+WHERE G.GymName = 'Pewter Gym';
+-- 
+
 
 -- RETRIEVE using nested query
 -- searching for all the Pokemon that Ash has:
@@ -265,6 +273,26 @@ BEGIN
         RETURN bestPokemon;
 END $$
 DELIMITER ;
+
+-- PROCEDURE:
+-- used to add pokemon and make sure that it is only owned by one unit: trainer or gym
+-- has an exact same copy for on update
+
+DELIMITER $$
+
+CREATE TRIGGER unique_ownership
+BEFORE INSERT OR Pokemon
+FOR EACH ROW
+BEGIN
+    IF (NEW.TrainerID IS NOT NULL AND NEW.GymName IS NOT NULL) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Either TrainerID or GymName must be non-null, but not both.';
+    END IF;
+END$$
+
+DELIMITER ;
+
+
 
 -- PROCEDURE
 -- used to add a new trainer (not sure if this one is right)
