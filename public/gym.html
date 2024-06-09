@@ -3,24 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Web Page</title>
+    <title>Gyms</title>
 </head>
-<nav>
-    <a href="pokemon.html">Pokemon</a>
-    <a href="trainers.html">Trainers</a>
-    <a href="gym.html">Gym</a>
-    <a href="index.html">home</a> 
-</nav>
 <body>
+    <nav>
+        <a href="pokemon.html">Pokemon</a>
+        <a href="trainers.html">Trainers</a>
+        <a href="gym.html">Gym</a>
+        <a href="index.html">Home</a>
+    </nav>
+    
     <header>
-        <h1>My Web Page</h1>
+        <h1>Gyms</h1>
     </header>
+    
     <div class="container">
-        <h2>Welcome to My Web Page</h2>
-        <p>This is a basic HTML template you can use to start your web projects.</p>
+        <h2>List of Gyms</h2>
+        
+        <form id="addGymForm">
+            <input type="text" name="GymName" placeholder="Gym Name" required>
+            <input type="text" name="Location" placeholder="Location" required>
+            <input type="text" name="SpecialtyType" placeholder="Specialty Type" required>
+            <input type="text" name="BadgeName" placeholder="Badge Name" required>
+            <button type="submit">Add Gym</button>
+        </form>
+        
+        <table id="gymsTable" border="1">
+            <thead>
+                <tr>
+                    <th>Gym Name</th>
+                    <th>Location</th>
+                    <th>Specialty Type</th>
+                    <th>Badge Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Gym rows will be appended here -->
+            </tbody>
+        </table>
     </div>
+    
     <footer>
         &copy; 2024 My Web Page
     </footer>
+    
+    <script>
+        // Fetch and display gyms
+        async function fetchGyms() {
+            try {
+                const response = await fetch('/gyms');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const gyms = await response.json();
+                const gymsTableBody = document.querySelector('#gymsTable tbody');
+                gymsTableBody.innerHTML = ''; // Clear existing table rows
+
+                gyms.forEach(gym => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${gym.GymName}</td>
+                        <td>${gym.Location}</td>
+                        <td>${gym.SpecialtyType}</td>
+                        <td>${gym.BadgeName}</td>
+                    `;
+                    gymsTableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching gyms:', error);
+            }
+        }
+
+        // Handle add gym form submission
+        document.getElementById('addGymForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            try {
+                const response = await fetch('/gyms', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        GymName: formData.get('GymName'),
+                        Location: formData.get('Location'),
+                        SpecialtyType: formData.get('SpecialtyType'),
+                        BadgeName: formData.get('BadgeName')
+                    }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const result = await response.json();
+                console.log(result);
+                fetchGyms();
+            } catch (error) {
+                console.error('Error adding gym:', error);
+            }
+        });
+
+        // Initial fetch
+        fetchGyms();
+    </script>
 </body>
 </html>

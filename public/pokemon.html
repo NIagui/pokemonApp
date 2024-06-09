@@ -9,18 +9,142 @@
     <a href="pokemon.html">Pokemon</a>
     <a href="trainers.html">Trainers</a>
     <a href="gym.html">Gym</a>
-    <a href="index.html">home</a> 
+    <a href="index.html">Home</a> 
 </nav>
 <body>
     <header>
         <h1>My Web Page</h1>
     </header>
     <div class="container">
-        <h2>Welcome to My Web Page</h2>
-        <p>This is a basic HTML template you can use to start your web projects.</p>
+        <h2>Pokemon List</h2>
+        <table id="pokemonTable" border="1">
+            <thead>
+                <tr>
+                    <th>Pokemon ID</th>
+                    <th>Pokedex</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Level</th>
+                    <th>Trainer ID</th>
+                    <th>Gym Name</th>
+                </tr>
+            </thead>
+            <tbody id="pokemonList">
+                <!-- Pokémon data will be populated here -->
+            </tbody>
+        </table>
+        <h2>Add Pokemon</h2>
+        <form id="addPokemonForm">
+            <input type="number" name="Pokedex" placeholder="Pokedex Number" required>
+            <input type="text" name="PokemonName" placeholder="Pokemon Name" required>
+            <input type="text" name="Type" placeholder="Type" required>
+            <input type="number" name="Level" placeholder="Level" required>
+            <input type="number" name="TrainerID" placeholder="Trainer ID">
+            <input type="text" name="GymName" placeholder="Gym Name">
+            <button type="submit">Add Pokemon</button>
+        </form>
+
+        <h2>Update Pokemon</h2>
+        <form id="updatePokemonForm">
+            <input type="number" name="PokemonID" placeholder="Pokemon ID" required>
+            <input type="number" name="Pokedex" placeholder="Pokedex Number" required>
+            <input type="text" name="PokemonName" placeholder="Pokemon Name" required>
+            <input type="text" name="Type" placeholder="Type" required>
+            <input type="number" name="Level" placeholder="Level" required>
+            <input type="number" name="TrainerID" placeholder="Trainer ID">
+            <input type="text" name="GymName" placeholder="Gym Name">
+            <button type="submit">Update Pokemon</button>
+        </form>
+
+        <h2>Delete Pokemon</h2>
+        <form id="deletePokemonForm">
+            <input type="number" name="PokemonID" placeholder="Pokemon ID" required>
+            <button type="submit">Delete Pokemon</button>
+        </form>
     </div>
     <footer>
         &copy; 2024 My Web Page
     </footer>
+
+    <script>
+        async function fetchPokemon() {
+            try {
+                const response = await fetch('http://localhost:3000/pokemon');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch Pokémon');
+                }
+                const pokemonData = await response.json();
+                const pokemonList = document.getElementById('pokemonList');
+                pokemonList.innerHTML = ''; // Clear previous data
+                pokemonData.forEach(pokemon => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${pokemon.PokemonID}</td>
+                        <td>${pokemon.Pokedex}</td>
+                        <td>${pokemon.PokemonName}</td>
+                        <td>${pokemon.Type}</td>
+                        <td>${pokemon.Level}</td>
+                        <td>${pokemon.TrainerID}</td>
+                        <td>${pokemon.GymName}</td>
+                    `;
+                    pokemonList.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching Pokémon:', error.message);
+            }
+        }
+
+        
+        async function addPokemon(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const response = await fetch('http://localhost:3000/pokemon', {
+                method: 'POST',
+                body: formData
+            });
+            if (response.ok) {
+                alert('Pokemon added successfully');
+            } else {
+                const errorData = await response.json();
+                alert('Error: ' + errorData.error);
+            }
+        }
+
+        async function updatePokemon(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const pokemonID = formData.get('PokemonID');
+            const response = await fetch(`http://localhost:3000/pokemon/${pokemonID}`, {
+                method: 'PUT',
+                body: formData
+            });
+            if (response.ok) {
+                alert('Pokemon updated successfully');
+            } else {
+                const errorData = await response.json();
+                alert('Error: ' + errorData.error);
+            }
+        }
+
+        async function deletePokemon(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const pokemonID = formData.get('PokemonID');
+            const response = await fetch(`http://localhost:3000/pokemon/${pokemonID}`, {
+                method: 'DELETE'
+            });
+            if (response.ok) {
+                alert('Pokemon deleted successfully');
+            } else {
+                const errorData = await response.json();
+                alert('Error: ' + errorData.error);
+            }
+        }
+
+        document.getElementById('addPokemonForm').addEventListener('submit', addPokemon);
+        document.getElementById('updatePokemonForm').addEventListener('submit', updatePokemon);
+        document.getElementById('deletePokemonForm').addEventListener('submit', deletePokemon);
+        fetchPokemon();
+    </script>
 </body>
 </html>
