@@ -195,6 +195,15 @@ LEFT JOIN Gym_Leader L ON G.GymName = L.GymName
 WHERE L.LeaderName = 'Brock';
 
 
+-- retrieve using JOIN: use trainer id to 
+SELECT T.TrainerName, B.BadgeName, A.DateEarned
+FROM Trainer T
+INNER JOIN Awarded A ON T.TrainerID = A.TrainerID
+INNER JOIN Badges B ON A.BadgeName = B.BadgeName
+WHERE T.TrainerName = 'Ash';
+
+
+
 -- RETRIEVE using nested query
 -- searching for all the Pokemon that Ash has:
 -- may be invalid: we don't need to use the trainer name at all
