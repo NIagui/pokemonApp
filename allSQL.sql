@@ -203,8 +203,8 @@ WHERE G.GymName = 'Pewter Gym';
 -- 
 
 
--- retrieve using JOIN: use trainer id to 
-SELECT T.TrainerName, B.BadgeName, A.DateEarned
+-- retrieve using JOIN: use trainer name to display all the trainer's badges
+SELECT B.BadgeName, A.DateEarned
 FROM Trainer T
 INNER JOIN Awarded A ON T.TrainerID = A.TrainerID
 INNER JOIN Badges B ON A.BadgeName = B.BadgeName
