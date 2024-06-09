@@ -128,6 +128,7 @@ app.post('/gyms', (req, res) => {
     const { GymName, Location, SpecialtyType, BadgeName } = req.body;
     connection.query('INSERT INTO Gym (GymName, Location, SpecialtyType, BadgeName) VALUES (?, ?, ?, ?)', [GymName, Location, SpecialtyType, BadgeName], (err, result) => {
         if (err) {
+            console.error(err)
             res.status(500).send(err);
             return;
         }
@@ -152,6 +153,7 @@ app.post('/pokemon', (req, res) => {
     const { Pokedex, PokemonName, Type, Level, TrainerID, GymName } = req.body;
     connection.query('INSERT INTO Pokemon (Pokedex, PokemonName, Type, Level, TrainerID, GymName) VALUES (?, ?, ?, ?, ?, ?)', [Pokedex, PokemonName, Type, Level, TrainerID, GymName], (err, result) => {
         if (err) {
+            console.error(err)
             res.status(500).send(err);
             return;
         }

@@ -98,9 +98,18 @@
         async function addPokemon(event) {
             event.preventDefault();
             const formData = new FormData(event.target);
+            const data = {
+                Pokedex: formData.get('Pokedex'),
+                PokemonName: formData.get('PokemonName'),
+                Type: formData.get('Type'),
+                Level: formData.get('Level'),
+                TrainerID: formData.get('TrainerID') || null,
+                GymName: formData.get('GymName') || null
+            }
             const response = await fetch('http://localhost:3000/pokemon', {
                 method: 'POST',
-                body: formData
+                body: JSON.stringify(data),
+                headers: {'Content-Type': 'application/json'}
             });
             if (response.ok) {
                 alert('Pokemon added successfully');
@@ -113,10 +122,19 @@
         async function updatePokemon(event) {
             event.preventDefault();
             const formData = new FormData(event.target);
+            const data = {
+                Pokedex: formData.get('Pokedex'),
+                PokemonName: formData.get('PokemonName'),
+                Type: formData.get('Type'),
+                Level: formData.get('Level'),
+                TrainerID: formData.get('TrainerID') || null,
+                GymName: formData.get('GymName') || null
+            }
             const pokemonID = formData.get('PokemonID');
             const response = await fetch(`http://localhost:3000/pokemon/${pokemonID}`, {
                 method: 'PUT',
-                body: formData
+                body: JSON.stringify(data),
+                headers: {'Content-Type': 'application/json'}
             });
             if (response.ok) {
                 alert('Pokemon updated successfully');
