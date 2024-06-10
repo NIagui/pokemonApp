@@ -72,6 +72,22 @@
             </tbody>
         </table>
     </div>
+
+    <!-- Place this in the appropriate part of trainers.html -->
+    <div id="badgeSection" style="display: none;">
+        <h2 id="badgeTitle"></h2>
+        <table id="badgeTable">
+            <thead>
+                <tr>
+                    <th>Badge Name</th>
+                    <th>Date Earned</th>
+                </tr>
+            </thead>
+            <tbody id="badgeList">
+                <!-- Badge data will be populated here -->
+            </tbody>
+        </table>
+    </div>
     
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -89,6 +105,7 @@
                         const deleteButton = document.createElement('button');
                         const updateButton = document.createElement('button');
                         const viewPokemonButton = document.createElement('button');
+                        const viewBadgesButton = document.createElement('button');
 
                         idCell.textContent = trainer.TrainerID;
                         nameCell.textContent = trainer.TrainerName;
@@ -99,11 +116,13 @@
                         updateButton.addEventListener('click', () => showUpdateForm(trainer));
                         viewPokemonButton.textContent = 'View Pokémon';
                         viewPokemonButton.addEventListener('click', () => fetchPokemonForTrainer(trainer.TrainerID, trainer.TrainerName));
-
+                        viewBadgesButton.textContent = 'View Badges';
+                        viewBadgesButton.addEventListener('click', () => fetchBadgesForTrainer(trainer.TrainerID, trainer.TrainerName));
 
                         actionsCell.appendChild(deleteButton);
                         actionsCell.appendChild(updateButton);
                         actionsCell.appendChild(viewPokemonButton);
+                        actionsCell.appendChild(viewBadgesButton);
                         row.appendChild(idCell);
                         row.appendChild(nameCell);
                         row.appendChild(locationCell);
@@ -230,6 +249,28 @@
             .catch(error => {
                 console.error('Error fetching Pokémon:', error);
                 alert('Failed to fetch Pokémon');
+            });
+        }
+
+        function fetchBadgesForTrainer(trainerID) {
+            fetch(`/trainers/${trainerID}/badges`)
+            .then(response => response.json())
+            .then(badges => {
+                const badgeList = document.getElementById('badgeList');
+                badgeList.innerHTML = '';  // Clear existing entries
+                badges.forEach(badge => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${badge.BadgeName}</td>
+                        <td>${badge.DateEarned || 'Not specified'}</td>
+                    `;
+                    badgeList.appendChild(row);
+                });
+                document.getElementById('badgeSection').style.display = 'block';  // Make sure to show the section if hidden
+            })
+            .catch(error => {
+                console.error('Failed to fetch badges:', error);
+                alert('Failed to fetch badges');
             });
         }
     </script>

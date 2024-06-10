@@ -121,6 +121,24 @@ app.get('/trainers/:id/pokemon', (req, res) => {
     });
 });
 
+// Allows user to see the badges owned by a given trainer.
+app.get('/trainers/:id/badges', (req, res) => {
+    const trainerID = req.params.id;
+    const query = `
+        SELECT B.BadgeName, A.DateEarned
+        FROM Awarded A
+        JOIN Badges B ON A.BadgeName = B.BadgeName
+        WHERE A.TrainerID = ?`;
+    connection.query(query, [trainerID], (error, results) => {
+        if (error) {
+            console.error('Error fetching badges for trainer:', error);
+            res.status(500).send('Error fetching badges for trainer');
+            return;
+        }
+        res.json(results);
+    });
+});
+
 app.get('/gyms', (req, res) => {
     connection.query('SELECT * FROM Gym', (err, results) => {
         if (err) {
