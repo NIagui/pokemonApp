@@ -39,13 +39,15 @@ connection.getConnection(error => {
 });
 
 
-// Define a route to get trainers
+// Define a route to get trainers (used aggregate)
 app.get('/trainers', (req, res) => {
     console.log('executing get trainers');
-    connection.query('SELECT * FROM Trainer', (error, results) => {
+    connection.query(`SELECT T.TrainerID, T.TrainerName, T.Location, COUNT(A.BadgeName) as badgeCount
+                    FROM Awarded A RIGHT JOIN Trainer T ON A.TrainerID = T.TrainerID
+                    GROUP BY T.TrainerID;`, (error, results) => {
         if (error) {
-            console.log('Error executing query: ', error)
-            res.status(500).send('Error executing query');
+            console.log('Error: ', error)
+            res.status(500).send(error);
             return;
         }
         console.log('OK');
@@ -126,7 +128,7 @@ app.get('/trainers/:id/pokemon', (req, res) => {
 app.get('/trainers/:id/badges', (req, res) => {
     const trainerID = req.params.id;
     const query = `
-        SELECT B.BadgeName, A.DateEarned, G.GymName
+        SELECT B.BadgeName, DATE_FORMAT(A.DateEarned, '%Y-%m-%d') AS DateEarned, G.GymName
         FROM Awarded A
         JOIN Badges B ON A.BadgeName = B.BadgeName
         JOIN Gym G ON G.BadgeName = B.BadgeName
@@ -214,7 +216,7 @@ app.put('/pokemon/:id', (req, res) => {
     connection.query(updatePokemonQuery, [Pokedex, PokemonName, Type, Level, TrainerID, GymName, pokemonID], (err, results) => {
         if (err) {
             console.error('Error executing query:', err.sqlMessage);
-            res.status(500).send({ error: err.sqlMessage });
+            res.status(500).send(err);
             return;
         }
         if (results.affectedRows === 0) {

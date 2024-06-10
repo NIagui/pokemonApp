@@ -3,25 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
     <title>My Web Page</title>
 </head>
 <nav>
     <a href="pokemon.html">Pokemon</a>
     <a href="trainers.html">Trainers</a>
     <a href="gym.html">Gym</a>
-    <a href="index.html">home</a> 
+    <a href="index.html">Home</a> 
 </nav>
 <body>
     <header>
-        <h1>My Web Page</h1>
     </header>
-    <h1>Trainers List</h1>
+    <h2>Trainers List</h2>
     <table id="trainers-table" border="1">
         <thead>
             <tr>
                 <th>Trainer ID</th>
                 <th>Trainer Name</th>
                 <th>Location</th>
+                <th>Badge Count</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -64,7 +65,7 @@
 
     <div id="pokemonSection" style="display: none;">
         <h2 id="trainerTitle"></h2>
-        <table id="pokemonTable">
+        <table id="pokemonTable" border="1">
             <thead>
                 <tr>
                     <th>Pokemon ID</th>
@@ -82,7 +83,7 @@
 
     <div id="badgeSection" style="display: none;">
         <h2 id="trainerBadgeTitle"></h2> <!-- Title for displaying the trainer's name -->
-        <table>
+        <table border="1">
             <thead>
                 <tr>
                     <th>Badge Name</th>
@@ -108,6 +109,7 @@
                         const idCell = document.createElement('td');
                         const nameCell = document.createElement('td');
                         const locationCell = document.createElement('td');
+                        const numBadgeCell = document.createElement('td');
                         const actionsCell = document.createElement('td');
                         const deleteButton = document.createElement('button');
                         const updateButton = document.createElement('button');
@@ -117,6 +119,7 @@
                         idCell.textContent = trainer.TrainerID;
                         nameCell.textContent = trainer.TrainerName;
                         locationCell.textContent = trainer.Location;
+                        numBadgeCell.textContent = trainer.badgeCount;
                         deleteButton.textContent = 'Delete';
                         deleteButton.addEventListener('click', () => deleteTrainer(trainer.TrainerID));
                         updateButton.textContent = 'Update';
@@ -133,6 +136,7 @@
                         row.appendChild(idCell);
                         row.appendChild(nameCell);
                         row.appendChild(locationCell);
+                        row.appendChild(numBadgeCell);
                         row.appendChild(actionsCell);
                         trainersTable.appendChild(row);
                     });

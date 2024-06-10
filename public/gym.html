@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
     <title>Gyms</title>
 </head>
 <body>
@@ -14,19 +15,18 @@
     </nav>
     
     <header>
-        <h1>Gyms</h1>
     </header>
     
     <div class="container">
         <h2>List of Gyms</h2>
         
-        <form id="addGymForm">
+        <!-- <form id="addGymForm">
             <input type="text" name="GymName" placeholder="Gym Name" required>
             <input type="text" name="Location" placeholder="Location" required>
             <input type="text" name="SpecialtyType" placeholder="Specialty Type" required>
             <input type="text" name="BadgeName" placeholder="Badge Name" required>
             <button type="submit">Add Gym</button>
-        </form>
+        </form> -->
         
         <table id="gymsTable" border="1">
             <thead>
@@ -74,30 +74,30 @@
             }
         }
 
-        // Handle add gym form submission
-        document.getElementById('addGymForm').addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const formData = new FormData(event.target);
-            try {
-                const response = await fetch('/gyms', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        GymName: formData.get('GymName'),
-                        Location: formData.get('Location'),
-                        SpecialtyType: formData.get('SpecialtyType'),
-                        BadgeName: formData.get('BadgeName')
-                    }),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                const result = await response.json();
-                console.log(result);
-                fetchGyms();
-            } catch (error) {
-                console.error('Error adding gym:', error);
-            }
-        });
+        // // Handle add gym form submission
+        // document.getElementById('addGymForm').addEventListener('submit', async (event) => {
+        //     event.preventDefault();
+        //     const formData = new FormData(event.target);
+        //     try {
+        //         const response = await fetch('/gyms', {
+        //             method: 'POST',
+        //             body: JSON.stringify({
+        //                 GymName: formData.get('GymName'),
+        //                 Location: formData.get('Location'),
+        //                 SpecialtyType: formData.get('SpecialtyType'),
+        //                 BadgeName: formData.get('BadgeName')
+        //             }),
+        //             headers: {
+        //                 'Content-Type': 'application/json'
+        //             }
+        //         });
+        //         const result = await response.json();
+        //         console.log(result);
+        //         fetchGyms();
+        //     } catch (error) {
+        //         console.error('Error adding gym:', error);
+        //     }
+        // });
 
         // Initial fetch
         fetchGyms();
