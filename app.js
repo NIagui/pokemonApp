@@ -110,8 +110,9 @@ app.put('/updateTrainer/:id', (req, res) => {
 
 // Add ability to see any given trainer's owned pokemon
 app.get('/trainers/:id/pokemon', (req, res) => {
-    const trainerID = req.params.id;
-    connection.query('SELECT * FROM Pokemon WHERE TrainerID = ?', [trainerID], (error, results) => {
+    const TrainerName = req.params.id;
+    connection.query('SELECT PokemonID, Pokedex, PokemonName, Type, Level FROM Pokemon WHERE TrainerID = (' +
+        'SELECT TrainerID FROM Trainer WHERE TrainerName = ?);', [TrainerName], (error, results) => {
         if (error) {
             console.error('Error fetching Pokémon for trainer:', error);
             res.status(500).send('Error fetching Pokémon for trainer');
