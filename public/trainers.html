@@ -73,7 +73,6 @@
         </table>
     </div>
 
-    <!-- Place this in the appropriate part of trainers.html -->
     <div id="badgeSection" style="display: none;">
         <h2 id="badgeTitle"></h2>
         <table id="badgeTable">
@@ -104,7 +103,7 @@
                         const actionsCell = document.createElement('td');
                         const deleteButton = document.createElement('button');
                         const updateButton = document.createElement('button');
-                        const viewPokemonButton = document.createElement('button');
+                        //const viewPokemonButton = document.createElement('button');
                         const viewBadgesButton = document.createElement('button');
 
                         idCell.textContent = trainer.TrainerID;
@@ -114,14 +113,14 @@
                         deleteButton.addEventListener('click', () => deleteTrainer(trainer.TrainerID));
                         updateButton.textContent = 'Update';
                         updateButton.addEventListener('click', () => showUpdateForm(trainer));
-                        viewPokemonButton.textContent = 'View Pokémon';
-                        viewPokemonButton.addEventListener('click', () => fetchPokemonForTrainer(trainer.TrainerID, trainer.TrainerName));
+                        //viewPokemonButton.textContent = 'View Pokémon';
+                        //viewPokemonButton.addEventListener('click', () => fetchPokemonForTrainer(trainer.TrainerID, trainer.TrainerName));
                         viewBadgesButton.textContent = 'View Badges';
                         viewBadgesButton.addEventListener('click', () => fetchBadgesForTrainer(trainer.TrainerID, trainer.TrainerName));
 
                         actionsCell.appendChild(deleteButton);
                         actionsCell.appendChild(updateButton);
-                        actionsCell.appendChild(viewPokemonButton);
+                        //actionsCell.appendChild(viewPokemonButton);
                         actionsCell.appendChild(viewBadgesButton);
                         row.appendChild(idCell);
                         row.appendChild(nameCell);
