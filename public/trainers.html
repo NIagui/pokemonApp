@@ -79,6 +79,22 @@
             </tbody>
         </table>
     </div>
+
+    <div id="badgeSection" style="display: none;">
+        <h2 id="trainerBadgeTitle"></h2> <!-- Title for displaying the trainer's name -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Badge Name</th>
+                    <th>Date Earned</th>
+                    <th>Gym Name</th>
+                </tr>
+            </thead>
+            <tbody id="badgeList">
+                <!-- Dynamically generated badge entries will go here -->
+            </tbody>
+        </table>
+    </div>
     
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -95,7 +111,8 @@
                         const actionsCell = document.createElement('td');
                         const deleteButton = document.createElement('button');
                         const updateButton = document.createElement('button');
-                        // const viewPokemonButton = document.createElement('button');
+                        //const viewPokemonButton = document.createElement('button');
+                        const viewBadgesButton = document.createElement('button');
 
                         idCell.textContent = trainer.TrainerID;
                         nameCell.textContent = trainer.TrainerName;
@@ -104,13 +121,15 @@
                         deleteButton.addEventListener('click', () => deleteTrainer(trainer.TrainerID));
                         updateButton.textContent = 'Update';
                         updateButton.addEventListener('click', () => showUpdateForm(trainer));
-                        // viewPokemonButton.textContent = 'View Pokémon';
-                        // viewPokemonButton.addEventListener('click', () => fetchPokemonForTrainer(trainer.TrainerID, trainer.TrainerName));
-
+                        //viewPokemonButton.textContent = 'View Pokémon';
+                        //viewPokemonButton.addEventListener('click', () => fetchPokemonForTrainer(trainer.TrainerID, trainer.TrainerName));
+                        viewBadgesButton.textContent = 'View Badges';
+                        viewBadgesButton.addEventListener('click', () => fetchBadgesForTrainer(trainer.TrainerID, trainer.TrainerName));
 
                         actionsCell.appendChild(deleteButton);
                         actionsCell.appendChild(updateButton);
-                        // actionsCell.appendChild(viewPokemonButton);
+                        //actionsCell.appendChild(viewPokemonButton);
+                        actionsCell.appendChild(viewBadgesButton);
                         row.appendChild(idCell);
                         row.appendChild(nameCell);
                         row.appendChild(locationCell);
@@ -246,6 +265,33 @@
                 alert('Failed to fetch Pokémon');
             });
         }
+
+        function fetchBadgesForTrainer(trainerID, trainerName) {
+            fetch(`/trainers/${trainerID}/badges`)
+            .then(response => response.json())
+            .then(badges => {
+                document.getElementById('trainerBadgeTitle').textContent = `${trainerName}'s Badges`; // Set the trainer's name in the title
+                const badgeList = document.getElementById('badgeList');
+                badgeList.innerHTML = ''; // Clear previous entries
+
+                badges.forEach(badge => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${badge.BadgeName}</td>
+                        <td>${badge.DateEarned || 'Not specified'}</td>
+                        <td>${badge.GymName || 'Unknown'}</td>
+                    `;
+                    badgeList.appendChild(row);
+                });
+
+                document.getElementById('badgeSection').style.display = 'block'; // Make the badge section visible
+            })
+            .catch(error => {
+                console.error('Failed to fetch badges:', error);
+                alert('Failed to fetch badges');
+            });
+        }
+        
     </script>
     <footer>
         &copy; 2024 My Web Page
