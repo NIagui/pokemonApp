@@ -126,9 +126,10 @@ app.get('/trainers/:id/pokemon', (req, res) => {
 app.get('/trainers/:id/badges', (req, res) => {
     const trainerID = req.params.id;
     const query = `
-        SELECT B.BadgeName, A.DateEarned
+        SELECT B.BadgeName, A.DateEarned, G.GymName
         FROM Awarded A
         JOIN Badges B ON A.BadgeName = B.BadgeName
+        JOIN Gym G ON G.BadgeName = B.BadgeName
         WHERE A.TrainerID = ?`;
     connection.query(query, [trainerID], (error, results) => {
         if (error) {

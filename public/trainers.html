@@ -81,16 +81,17 @@
     </div>
 
     <div id="badgeSection" style="display: none;">
-        <h2 id="badgeTitle"></h2>
-        <table id="badgeTable">
+        <h2 id="trainerBadgeTitle"></h2> <!-- Title for displaying the trainer's name -->
+        <table>
             <thead>
                 <tr>
                     <th>Badge Name</th>
                     <th>Date Earned</th>
+                    <th>Gym Name</th>
                 </tr>
             </thead>
             <tbody id="badgeList">
-                <!-- Badge data will be populated here -->
+                <!-- Dynamically generated badge entries will go here -->
             </tbody>
         </table>
     </div>
@@ -265,27 +266,32 @@
             });
         }
 
-        function fetchBadgesForTrainer(trainerID) {
+        function fetchBadgesForTrainer(trainerID, trainerName) {
             fetch(`/trainers/${trainerID}/badges`)
             .then(response => response.json())
             .then(badges => {
+                document.getElementById('trainerBadgeTitle').textContent = `${trainerName}'s Badges`; // Set the trainer's name in the title
                 const badgeList = document.getElementById('badgeList');
-                badgeList.innerHTML = '';  // Clear existing entries
+                badgeList.innerHTML = ''; // Clear previous entries
+
                 badges.forEach(badge => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${badge.BadgeName}</td>
                         <td>${badge.DateEarned || 'Not specified'}</td>
+                        <td>${badge.GymName || 'Unknown'}</td>
                     `;
                     badgeList.appendChild(row);
                 });
-                document.getElementById('badgeSection').style.display = 'block';  // Make sure to show the section if hidden
+
+                document.getElementById('badgeSection').style.display = 'block'; // Make the badge section visible
             })
             .catch(error => {
                 console.error('Failed to fetch badges:', error);
                 alert('Failed to fetch badges');
             });
         }
+        
     </script>
     <footer>
         &copy; 2024 My Web Page
