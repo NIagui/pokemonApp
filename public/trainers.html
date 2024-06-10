@@ -41,8 +41,8 @@
     </div>
 
     <div>
-        <h2>Update Trainer</h2>
         <form id="updateTrainerForm" style="display:none;">
+            <h2>Update Trainer</h2>
             <input type="hidden" id="updateTrainerID" name="TrainerID">
             <label for="updateTrainerName">Trainer Name:</label>
             <input type="text" id="updateTrainerName" name="TrainerName" required>
@@ -52,7 +52,16 @@
             <button type="button" onclick="hideUpdateForm()">Cancel</button>
         </form>
     </div>
-    
+
+    <div> 
+        <h2>Enter your username and view your pokemon collection</h2>
+        <form id="viewPokemonForm">
+            <label for="TrainerName">Trainer Name:</label>
+            <input type="text" id="TrainerName" name="TrainerName" required>
+            <button type="submit">View Pokemon</button>
+        </form>
+    </div>
+
     <div id="pokemonSection" style="display: none;">
         <h2 id="trainerTitle"></h2>
         <table id="pokemonTable">
@@ -63,8 +72,6 @@
                     <th>Name</th>
                     <th>Type</th>
                     <th>Level</th>
-                    <th>Trainer ID</th>
-                    <th>Gym Name</th>
                 </tr>
             </thead>
             <tbody id="pokemonList">
@@ -221,8 +228,17 @@
             }
         });
 
-        function fetchPokemonForTrainer(trainerID, trainerName) {
-            fetch(`/trainers/${trainerID}/pokemon`)
+
+        document.getElementById('viewPokemonForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const name = formData.get('TrainerName');
+            fetchPokemonForTrainer(name)
+        });
+
+
+        function fetchPokemonForTrainer(trainerName) {
+            fetch(`/trainers/${trainerName}/pokemon`)
             .then(response => response.json())
             .then(pokemon => {
                 document.getElementById('trainerTitle').textContent = `${trainerName}'s Pokemon`; // Set the trainer's name
@@ -237,8 +253,6 @@
                         <td>${poke.PokemonName}</td>
                         <td>${poke.Type}</td>
                         <td>${poke.Level}</td>
-                        <td>${poke.TrainerID}</td>
-                        <td>${poke.GymName}</td>
                     `;
                     pokemonTable.appendChild(row);
                 });
