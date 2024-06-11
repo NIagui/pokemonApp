@@ -1,4 +1,3 @@
-/* Basic Reset */
 * {
     margin: 0;
     padding: 0;
@@ -7,22 +6,20 @@
 
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #f0f8ff; /* Light blue background reminiscent of the sky */
+    background-color: #f0f8ff; 
     color: #333;
     padding: 20px;
 }
 
-/* Header Styles */
 h1, h2, h3 {
-    font-family: 'Pokemon Solid', sans-serif; /* You can use a custom Pokemon font if available */
-    color: #ffcb05; /* Pikachu yellow */
-    text-shadow: 2px 2px #3b4cca; /* Shadow to make text pop */
+    font-family: 'Pokemon Solid', sans-serif; 
+    color: #ffcb05; 
+    text-shadow: 2px 2px #3b4cca; 
 }
 
-/* Link Styles */
 a {
     display: inline-block;
-    color: #ffcb05; /* Pikachu yellow */
+    color: #ffcb05; 
     text-decoration: none;
     font-weight: bold;
     position: relative;
@@ -59,7 +56,7 @@ a:hover::before {
 }
 
 a:active {
-    color: #ff6347; /* A vibrant red color to indicate active state */
+    color: #ff6347; 
 }
 
 p {
@@ -79,7 +76,7 @@ div {
 /* Form Styles */
 form {
     background-color: #fff;
-    border: 2px solid #3b4cca; /* Pokémon blue */
+    border: 2px solid #3b4cca; 
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -118,7 +115,7 @@ button:hover {
     background-color: #3b4cca;
 }
 
-/* Container Styles */
+
 .container {
     max-width: 800px;
     margin: 0 auto;
@@ -129,7 +126,7 @@ button:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Table Styles */
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -151,7 +148,7 @@ tr:nth-child(even) {
     background-color: #f0f8ff;
 }
 
-/* Add Pokémon Styles */
+
 .add-pokemon-form {
     margin-top: 20px;
 }
