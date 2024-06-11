@@ -232,6 +232,13 @@ SELECT T.TrainerName, COUNT(A.BadgeName) as BadgeCount
 FROM Awarded A JOIN Trainer T ON A.TrainerID = T.TrainerID
 GROUP BY T.TrainerID;
 
+-- retrieve all badges of a trainer
+SELECT B.BadgeName, DATE_FORMAT(A.DateEarned, '%Y-%m-%d') AS DateEarned, G.GymName
+        FROM Awarded A
+        JOIN Badges B ON A.BadgeName = B.BadgeName
+        JOIN Gym G ON G.BadgeName = B.BadgeName
+        WHERE A.TrainerID = ?
+
 -- UPDATE
 -- change the status of a pokemon if it got caught by a trainer e.g. ID = 1
 UPDATE Pokemon
@@ -243,13 +250,9 @@ WHERE PokemonID = 7;
 DELETE FROM Trainer
 WHERE TrainerID = 11;
 
--- Trigger
--- used for checking the maximum amount of pokemons a trainer can have (5)
-DELIMITER $$
-CREATE TRIGGER PokemonLimit BEFORE INSERT ON Pokemon
-
-FOR EACH ROW 
-BEGIN
+-- ALL Triggers
+CREATE TRIGGER `PokemonLimit_insert` BEFORE INSERT ON `Pokemon`
+ FOR EACH ROW BEGIN
         DECLARE pokemonCount INT;
 
         SELECT COUNT(*)
@@ -259,10 +262,72 @@ BEGIN
 
         IF pokemonCount >= 5 THEN 
           SIGNAL SQLSTATE '45000'
-          SET MESSAGE_TEXT = 'maximum number of Pokemon exceeded';
+          SET MESSAGE_TEXT = 'maximum number of Pokemon exceeded (max 5)';
         END IF;
-END; $$
-DELIMITER ;
+END
+
+CREATE TRIGGER `PokemonLimit_update` BEFORE UPDATE ON `Pokemon`
+ FOR EACH ROW BEGIN
+        DECLARE pokemonCount INT;
+
+        SELECT COUNT(*)
+        INTO pokemonCount
+        FROM Pokemon 
+        WHERE TrainerID = NEW.TrainerID
+        AND PokemonID != OLD.PokemonID;
+
+        IF pokemonCount >= 5 THEN 
+          SIGNAL SQLSTATE '45000'
+          SET MESSAGE_TEXT = 'maximum number of Pokemon exceeded (max 5)';
+        END IF;
+END
+
+CREATE TRIGGER `unique_ownership` BEFORE INSERT ON `Pokemon`
+ FOR EACH ROW BEGIN
+    IF (NEW.TrainerID IS NOT NULL AND NEW.GymName IS NOT NULL) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Pokemon can be owned by a trainer or a gym but not both.';
+    END IF;
+END
+
+CREATE TRIGGER `unique_ownership_update` BEFORE UPDATE ON `Pokemon`
+ FOR EACH ROW BEGIN
+    IF (NEW.TrainerID IS NOT NULL AND NEW.GymName IS NOT NULL) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Pokemon can be owned by a trainer or a gym but not both.';
+    END IF;
+END
+
+CREATE TRIGGER `unique_pokedex_pokemon_insert` BEFORE INSERT ON `Pokemon`
+ FOR EACH ROW BEGIN
+    DECLARE existingName VARCHAR(50);
+
+    SELECT PokemonName INTO existingName
+    FROM Pokemon
+    WHERE Pokedex = NEW.Pokedex
+    LIMIT 1;
+
+    IF existingName IS NOT NULL AND existingName != NEW.PokemonName THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'This pokedex is already used on some other pokemon.';
+    END IF;
+END
+
+CREATE TRIGGER `unique_pokedex_pokemon_update` BEFORE UPDATE ON `Pokemon`
+ FOR EACH ROW BEGIN
+    DECLARE existingName VARCHAR(50);
+
+    SELECT PokemonName INTO existingName
+    FROM Pokemon
+    WHERE Pokedex = NEW.Pokedex
+    LIMIT 1;
+
+    IF existingName IS NOT NULL AND existingName != NEW.PokemonName THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'This pokedex is already used on some other pokemon.';
+    END IF;
+END
+
 
 
 -- Function
