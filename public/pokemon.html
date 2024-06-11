@@ -17,7 +17,7 @@
     </header>
     <div class="container">
         <h2>Pokemon List</h2>
-        <p>A pokemon can be either owned by a trainer, a gym, or wild (where both trainer and gym name are null) </p>
+        <p>A pokemon can be either owned by a trainer, a gym, or be wild. Be careful they are dangerous..... a pokemon also cant be owned by both a gym and a trainer. </p>
         </br>
         <table id="pokemonTable" border="1">
             <thead>
@@ -41,8 +41,8 @@
             <input type="text" name="PokemonName" placeholder="Pokemon Name" required>
             <input type="text" name="Type" placeholder="Type" required>
             <input type="number" name="Level" placeholder="Level" required>
-            <input type="number" name="TrainerID" placeholder="Trainer ID, null by default">
-            <input type="text" name="GymName" placeholder="Gym Name, null by default">
+            <input type="number" name="TrainerID" placeholder="Trainer ID">
+            <input type="text" name="GymName" placeholder="Gym Name">
             <button type="submit">Add Pokemon</button>
         </form>
 
@@ -53,8 +53,8 @@
             <input type="text" name="PokemonName" placeholder="Pokemon Name" required>
             <input type="text" name="Type" placeholder="Type" required>
             <input type="number" name="Level" placeholder="Level" required>
-            <input type="number" name="TrainerID" placeholder="Trainer ID, null by default">
-            <input type="text" name="GymName" placeholder="Gym Name, null by default">
+            <input type="number" name="TrainerID" placeholder="Trainer ID">
+            <input type="text" name="GymName" placeholder="Gym Name">
             <button type="submit">Update Pokemon</button>
         </form>
 
@@ -78,16 +78,27 @@
                 const pokemonData = await response.json();
                 const pokemonList = document.getElementById('pokemonList');
                 pokemonList.innerHTML = ''; // Clear previous data
+        
                 pokemonData.forEach(pokemon => {
                     const row = document.createElement('tr');
+                    let trainerOrGym = '';
+        
+                    if (pokemon.TrainerID === null && pokemon.GymName === null) {
+                        trainerOrGym = 'Wild Pokémon';
+                    } else {
+                        trainerOrGym = `
+                            <td>${pokemon.TrainerID || ''}</td>
+                            <td>${pokemon.GymName || ''}</td>
+                        `;
+                    }
+        
                     row.innerHTML = `
-                        <td>${pokemon.PokemonID}</td>
-                        <td>${pokemon.Pokedex}</td>
-                        <td>${pokemon.PokemonName}</td>
-                        <td>${pokemon.Type}</td>
-                        <td>${pokemon.Level}</td>
-                        <td>${pokemon.TrainerID}</td>
-                        <td>${pokemon.GymName}</td>
+                        <td>${pokemon.PokemonID || ''}</td>
+                        <td>${pokemon.Pokedex || ''}</td>
+                        <td>${pokemon.PokemonName || ''}</td>
+                        <td>${pokemon.Type || ''}</td>
+                        <td>${pokemon.Level || ''}</td>
+                        ${trainerOrGym}
                     `;
                     pokemonList.appendChild(row);
                 });
@@ -95,7 +106,7 @@
                 console.error('Error fetching Pokémon:', error.message);
             }
         }
-
+        
         
         async function addPokemon(event) {
             event.preventDefault();
@@ -156,6 +167,8 @@
             });
             if (response.ok) {
                 alert('Pokemon deleted successfully');
+                location.reload();  //
+
             } else {
                 const errorData = await response.json();
                 alert('Error: ' + errorData.error);
